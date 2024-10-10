@@ -169,7 +169,7 @@ static int load_sections_bfd(bfd *bfd_h, Binary *bin) {
     }
     return 0;
 }
-// binary loader !! 
+
 static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type type , const char *sec_name) {
     int ret;
     bfd *bfd_h;
@@ -183,6 +183,7 @@ static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type 
         printf("the dsired section '%s' doesn't exist !!\n" , sec_name) ;
         goto fail ;
     }
+    // if exist ; we start reading the content of the section :
     for(asection *sec = bfd_h->sections ; sec!=nullptr ; sec=sec->next) {
         if(sec == bfd_get_section_by_name(bfd_h,sec_name)){
             size_t size_sec = bfd_section_size(sec) ;
@@ -197,7 +198,22 @@ static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type 
             printf("contents of section %s : \n" , sec_name) ;
             for(size_t i=0 ; i<size_sec ; i++){
                 if(i%16==0 and i!=0){
+                    printf("    ") ;
+                    for(size_t j=0 ; j<16 ; ++j){
+                        if((int)(byte_data[i-16+j])>31 && (int)(byte_data[i-16+j])<=126){
+                            printf("%c" , byte_data[i-16+j]) ;
+                        }
+                        else{
+                            printf(".") ;
+                        }
+                    }
                     printf("\n") ;
+                }
+                else if(i==size_sec-1){
+                    printf("    ") ;
+                    for(int k=1 ; k<(size_sec % 16) ; ++k){
+                        printf("%c" , byte_data[i-(size_sec%16)+k]) ;
+                    }
                 }
                 printf("%02x" , byte_data[i]) ;
                 if((i+1)%4==0){
@@ -208,6 +224,7 @@ static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type 
             free(data) ;
         }
     }
+
     bin->filename = std::string(fname);
     bin->entry = bfd_get_start_address(bfd_h);
     bin->type_str = std::string(bfd_h->xvec->name);
