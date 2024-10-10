@@ -198,7 +198,7 @@ static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type 
             printf("contents of section %s : \n" , sec_name) ;
             for(size_t i=0 ; i<size_sec ; i++){
                 if(i%16==0 and i!=0){
-                    printf("    ") ;
+                    for(int j=0 ; j<(size_sec%16)+6 ; j++) printf(" ") ;
                     for(size_t j=0 ; j<16 ; ++j){
                         if((int)(byte_data[i-16+j])>31 && (int)(byte_data[i-16+j])<=126){
                             printf("%c" , byte_data[i-16+j]) ;
