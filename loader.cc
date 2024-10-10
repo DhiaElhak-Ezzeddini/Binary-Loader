@@ -169,7 +169,7 @@ static int load_sections_bfd(bfd *bfd_h, Binary *bin) {
     }
     return 0;
 }
-
+// binary loader !! 
 static int load_binary_bfd(std::string &fname, Binary *bin, Binary::Binary_type type , const char *sec_name) {
     int ret;
     bfd *bfd_h;
